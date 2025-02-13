@@ -22,6 +22,16 @@
         - php
       state: latest
 
+  - name: copy default html file for site
+    tags: httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+
 - hosts: postgres_servers
   tags: shell
   become: true
