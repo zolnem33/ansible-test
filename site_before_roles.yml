@@ -1,0 +1,75 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: update repo cache
+    tags: always
+    package:
+      update_cache: yes
+    changed_when: false
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: add ssh key for rvdas
+    tags: always
+    authorized_key:
+      user: rvdas
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBbwfbZBINb0ytWoG9NFnmgER3Bk+TLE0NfkqCX3TdTI ansible"
+
+
+- hosts: HA_proxys
+  tags: httpd,php
+  become: true
+  tasks:
+
+  - name: install httpd package
+    package:
+      name:
+        - httpd
+        - php
+      state: latest
+
+  - name: start httpd
+    tags: httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+
+  - name: change e-mail address for admin
+    tags: httpd
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin zome@noc.ac.uk
+    register: httpd
+
+  - name: restart httpd
+    tags: httpd
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
+
+
+  - name: copy default html file for site
+    tags: httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+
+- hosts: postgres_servers
+  tags: shell
+  become: true
+  tasks: 
+  - name: Display disk space
+    shell: df -h 
+

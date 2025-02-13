@@ -1,0 +1,5 @@
+- name: add ssh key for rvdas
+  tags: always
+  authorized_key:
+    user: rvdas
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBbwfbZBINb0ytWoG9NFnmgER3Bk+TLE0NfkqCX3TdTI ansible"

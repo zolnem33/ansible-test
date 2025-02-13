@@ -1,0 +1,4 @@
+- name: Display disk space
+  shell: df -h
+
+

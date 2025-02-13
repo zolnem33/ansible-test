@@ -1,0 +1,39 @@
+- name: install httpd package
+  package:
+    name:
+      - httpd
+      - php
+    state: latest
+
+- name: start httpd
+  tags: httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: change e-mail address for admin
+  tags: httpd
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin zome@noc.ac.uk
+  register: httpd
+
+- name: restart httpd
+  tags: httpd
+  service:
+    name: httpd
+    state: restarted
+  when: httpd.changed
+
+
+- name: copy default html file for site
+  tags: httpd
+  copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
+
