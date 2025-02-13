@@ -5,11 +5,13 @@
   pre_tasks:
 
   - name: install updates
+    tags: always
     package:
       update_only: yes
       update_cache: yes
 
 - hosts: HA_proxys
+  tags: httpd,php
   become: true
   tasks:
 
@@ -21,6 +23,7 @@
       state: latest
 
 - hosts: postgres_servers
+  tags: shell
   become: true
   tasks: 
   - name: Display disk space
