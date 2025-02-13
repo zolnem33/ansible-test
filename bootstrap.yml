@@ -1,0 +1,37 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates
+    tags: always
+    package:
+      update_only: yes
+      update_cache: yes
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create rvdas user
+    tags: always
+    user:
+      name: rvdas
+      groups: root
+
+  - name: add ssh key for rvdas
+    tags: always
+    authorized_key:
+      user: rvdas
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBbwfbZBINb0ytWoG9NFnmgER3Bk+TLE0NfkqCX3TdTI ansible"
+
+  - name: add sudoers file to rvdas
+    tags: always
+    copy:
+      src: sudoer_rvdas
+      dest: /etc/sudoers.d/rvdas
+      owner: root
+      group: root
+      mode: 0440
+
