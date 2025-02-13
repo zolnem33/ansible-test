@@ -1,0 +1,28 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates
+    package:
+      update_only: yes
+      update_cache: yes
+
+- hosts: HA_proxys
+  become: true
+  tasks:
+
+  - name: install httpd package
+    package:
+      name:
+        - httpd
+        - php
+      state: latest
+
+- hosts: postgres_servers
+  become: true
+  tasks: 
+  - name: Display disk space
+    shell: df -h 
+
