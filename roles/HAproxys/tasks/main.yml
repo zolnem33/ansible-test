@@ -1,14 +1,14 @@
 - name: install httpd package
   package:
     name:
-      - httpd
-      - php
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
     state: latest
 
 - name: start httpd
   tags: httpd
   service:
-    name: httpd
+    name: "{{ apache_service }}"
     state: started
     enabled: yes
 
@@ -17,16 +17,8 @@
   lineinfile:
     path: /etc/httpd/conf/httpd.conf
     regexp: '^ServerAdmin'
-    line: ServerAdmin zome@noc.ac.uk
-  register: httpd
-
-- name: restart httpd
-  tags: httpd
-  service:
-    name: httpd
-    state: restarted
-  when: httpd.changed
-
+    line: ServerAdmin nmfss_shipsys@noc.ac.uk
+  notify: restart_apache
 
 - name: copy default html file for site
   tags: httpd
